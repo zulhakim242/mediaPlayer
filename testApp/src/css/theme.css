@@ -1,0 +1,48 @@
+/* * {
+    -fx-primary :#2A2E37;
+    -fx-secondary : #FFFF8D;
+    -fx-primarytext : #B2B2B2;
+}
+
+.root {
+    -fx-background-color: -fx-primary;
+} */
+
+/* .glyph-icon
+{
+    -fx-fill: -fx-primarytext;
+} */
+
+.button {
+/*     -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-primarytext;
+    -fx-border-color: -fx-secondary; */
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+/* .list-cell {
+    -fx-text-fill: -fx-primarytext;
+}
+
+.list-cell:odd {
+    -fx-background-color: -fx-primary;
+}
+
+.list-cell:even {
+    -fx-background-color: -fx-primary;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);
+    -fx-text-fill: white;
+} */
+
+/* .list-cell:even { 
+    -fx-background-color: white;
+} */
+
+.list-cell:filled:hover {
+    -fx-background-color: #0093ff;
+    -fx-text-fill: white;
+}
