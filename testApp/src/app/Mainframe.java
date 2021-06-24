@@ -2,6 +2,7 @@ package app;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
+/* import javafx.scene.control.Label; */
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
@@ -14,12 +15,14 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.FilenameFilter;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+/* import javafx.scene.text.Text; */
 
 public class Mainframe {
     private MediaPlayer mediaPlayer;
     private File[] list;
     private PlaylistHandler playlistHandler;
-    
+    public static String status;
+
     @FXML
     private MediaView mediaView;
 
@@ -37,6 +40,9 @@ public class Mainframe {
     
     @FXML
     private StackPane pane;
+
+/*     @FXML
+    private Text playingStatus; */
 
     public void startMediaPlayer(String path) {
         if(path != null) {
@@ -61,11 +67,15 @@ public class Mainframe {
             mediaPlayer.setOnReady(() -> {
                 Duration total = media.getDuration();
                 progressBar.setMax(total.toSeconds());
+                
             });
 
             volumeSlider.setValue(mediaPlayer.getVolume() * 100);
             volumeSlider.valueProperty().addListener(arg0 -> mediaPlayer.setVolume(volumeSlider.getValue()/100));
             playOrPauseBtn.setGlyphName("PAUSE");
+            File f = new File(path);
+            System.out.println(f.getName().toString());
+            App.primaryStage.setTitle(f.getName());
             mediaPlayer.play();
         }
     }
@@ -117,6 +127,9 @@ public class Mainframe {
     public void chooseFileMethod() {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(null);
+        if((playlistHandler != null) && (file != null)) { // temp solution
+            mediaList.getItems().clear();
+        }
         String path = file.toURI().toString();
         mediaList.getItems().add(new String(file.getName()));
         startMediaPlayer(path);

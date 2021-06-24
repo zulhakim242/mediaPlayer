@@ -7,9 +7,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
+
+    public static Stage primaryStage; //
+
     @Override
     public void start(Stage primaryStage) {
         try {
+            App.primaryStage = primaryStage; //
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Mainframe.fxml"));
             Parent root = fxmlLoader.load();
             Scene scene = new Scene(root);
