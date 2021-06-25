@@ -165,11 +165,23 @@ public class Mainframe {
     }
 
     public void slowRate() {
-        mediaPlayer.setRate(0.5);
+        if(mediaPlayer.rateProperty().getValue() == 0.5) {
+            mediaPlayer.setRate(1.0);
+        }
+        else {
+            mediaPlayer.setRate(0.5);
+        }
+        System.out.println("Playing rate: " + mediaPlayer.rateProperty().getValue());
     }
 
     public void fastRate() {
-        mediaPlayer.setRate(1.5);
+        if(mediaPlayer.rateProperty().getValue() == 1.5) {
+            mediaPlayer.setRate(1.0);
+        }
+        else {
+            mediaPlayer.setRate(1.5);
+        }
+        System.out.println("Playing rate: " + mediaPlayer.rateProperty().getValue());
     }
 
     public void skip10() {
