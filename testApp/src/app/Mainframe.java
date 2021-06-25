@@ -2,7 +2,6 @@ package app;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
-/* import javafx.scene.control.Label; */
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
@@ -14,13 +13,15 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-/* import javafx.scene.text.Text; */
 
 public class Mainframe {
     private MediaPlayer mediaPlayer;
     private File[] list;
     private PlaylistHandler playlistHandler;
+    private List<File> listFile = new ArrayList<>();
     public static String status;
 
     @FXML
@@ -41,13 +42,14 @@ public class Mainframe {
     @FXML
     private StackPane pane;
 
-/*     @FXML
-    private Text playingStatus; */
 
-    public void startMediaPlayer(String path) {
-        if(path != null) {
+
+    public void startMediaPlayer() {
+
+            String path = listFile.get(playlistHandler.getCurrInPlaylist()).toURI().toString();
             Media media = new Media(path);
             mediaPlayer = new MediaPlayer(media);
+            
             mediaView.setMediaPlayer(mediaPlayer);
 
             DoubleProperty widthProp = mediaView.fitWidthProperty();
@@ -55,8 +57,6 @@ public class Mainframe {
 
             widthProp.bind(pane.widthProperty());
             heightProp.bind(pane.heightProperty());
-            //widthProp.bind(Bindings.selectDouble(pane.widthProperty()/* mediaView.sceneProperty() */, "width"));
-            //heightProp.bind(Bindings.selectDouble(pane.heightProperty()/* mediaView.sceneProperty() */, "height")); 
             
             mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> progressBar.setValue(newValue.toSeconds()));
 
@@ -73,11 +73,20 @@ public class Mainframe {
             volumeSlider.setValue(mediaPlayer.getVolume() * 100);
             volumeSlider.valueProperty().addListener(arg0 -> mediaPlayer.setVolume(volumeSlider.getValue()/100));
             playOrPauseBtn.setGlyphName("PAUSE");
+            
             File f = new File(path);
-            System.out.println(f.getName().toString());
-            App.primaryStage.setTitle(f.getName());
+            App.primaryStage.setTitle("Now Playing: " + f.getName());
             mediaPlayer.play();
-        }
+
+            mediaList.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    if(mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                        mediaPlayer.pause();
+                    }
+                    playlistHandler.setCurrent(mediaList.getSelectionModel().getSelectedIndex());
+                    startMediaPlayer();
+                }
+            });
     }
 
     public void chooseDirectoryMethod() {
@@ -95,44 +104,27 @@ public class Mainframe {
 
         DirectoryChooser directorychooser = new DirectoryChooser();
         File selectedDirectory = directorychooser.showDialog(null);
-        if(selectedDirectory != null) {
-            mediaList.getItems().clear(); // clear the ListView if new directory is opened
-        }
 
         System.out.println(selectedDirectory.getAbsolutePath());
         list = selectedDirectory.listFiles(mediaFilter);
         for(int i=0; i<list.length; i++) {
             mediaList.getItems().add(list[i].getName());
             System.out.println(list[i].getAbsolutePath());
+            listFile.add(list[i]);
         }
-        
-        playlistHandler = new PlaylistHandler(mediaList);
-        playlistHandler.setListLength(list.length);
-        playlistHandler.startPlaylist();
-        startMediaPlayer(list[0].toURI().toString());
-
-        mediaList.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                if(mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                    mediaPlayer.pause();
-                }
-                playlistHandler.setCurrent(mediaList.getSelectionModel().getSelectedIndex());
-                String p = list[playlistHandler.getCurrInPlaylist()].toURI().toString();
-                startMediaPlayer(p);
-                
-            }
-        });
+        System.out.println(listFile);
+        playlistHandler = new PlaylistHandler(listFile);
+        startMediaPlayer();
     }
 
     public void chooseFileMethod() {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(null);
-        if((playlistHandler != null) && (file != null)) { // temp solution
-            mediaList.getItems().clear();
-        }
-        String path = file.toURI().toString();
+        listFile.add(file);
+        System.out.println("list file from choosefilemethod: " + listFile);
         mediaList.getItems().add(new String(file.getName()));
-        startMediaPlayer(path);
+        playlistHandler = new PlaylistHandler(listFile);
+        startMediaPlayer();
     }
     
     public void play() {
@@ -154,10 +146,6 @@ public class Mainframe {
             mediaPlayer.setRate(1);
         }
     }
-    
-    /* public void pause() {
-        mediaPlayer.pause();
-    } */
     
     public void stop() {
         mediaPlayer.stop();
@@ -194,16 +182,15 @@ public class Mainframe {
 
     public void stepBackward() {
         mediaPlayer.pause();
-        String path = list[playlistHandler.getPrevInPlaylist()].toURI().toString();
-        System.out.println(path);
-        startMediaPlayer(path);
+        playlistHandler.getPrevInPlaylist();
+        startMediaPlayer();
     }
 
     public void stepForward() {
         mediaPlayer.pause();
-        String path = list[playlistHandler.getNextInPlaylist()].toURI().toString();
-        System.out.println(path);
-        startMediaPlayer(path);
+        playlistHandler.getNextInPlaylist();
+        System.out.println(playlistHandler.getCurrInPlaylist());
+        startMediaPlayer();
     }
 
     @FXML

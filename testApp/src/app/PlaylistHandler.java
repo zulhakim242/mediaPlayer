@@ -1,21 +1,26 @@
 package app;
 
-import javafx.scene.control.ListView;
+/* import javafx.scene.control.ListView; */
+import java.util.List;
+import java.io.File;
 
 public class PlaylistHandler {
     private int currentlyPlaying = 0;
     private int previous;
     private int next;
     private int listLength;
-    private ListView<String> listFile;
+    private List<File> listFile;
     
-    PlaylistHandler(ListView<String> listFile) {
+    PlaylistHandler(List<File> listFile) {
         this.listFile = listFile;
+        listLength = listFile.size();
+        startPlaylist();
     }
 
     public void setListLength(int listLength) {
         this.listLength = listLength;
         // System.out.println("List total: " + listLength);
+
     }
 
     public int startPlaylist() {
