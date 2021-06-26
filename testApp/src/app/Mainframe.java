@@ -42,8 +42,6 @@ public class Mainframe {
     @FXML
     private StackPane pane;
 
-
-
     public void startMediaPlayer() {
 
             String path = listFile.get(playlistHandler.getCurrInPlaylist()).toURI().toString();
@@ -73,9 +71,8 @@ public class Mainframe {
             volumeSlider.setValue(mediaPlayer.getVolume() * 100);
             volumeSlider.valueProperty().addListener(arg0 -> mediaPlayer.setVolume(volumeSlider.getValue()/100));
             playOrPauseBtn.setGlyphName("PAUSE");
-            
-            File f = new File(path);
-            App.primaryStage.setTitle("Now Playing: " + f.getName());
+            status = mediaList.getItems().get(playlistHandler.getCurrInPlaylist());
+            App.primaryStage.setTitle("Now Playing: " + status);
             mediaPlayer.play();
 
             mediaList.setOnMouseClicked(event -> {
@@ -128,28 +125,35 @@ public class Mainframe {
     }
     
     public void play() {
+        String s = "";
         if(mediaPlayer != null)
         if(mediaPlayer.getStatus()==MediaPlayer.Status.PLAYING){
             mediaPlayer.pause();
             // set icon to play
+            s += "Paused: ";
             playOrPauseBtn.setGlyphName("PLAY");
         }
         if (mediaPlayer.getStatus()==MediaPlayer.Status.PAUSED){
             mediaPlayer.play();
+            s += "Now Playing: ";
             // set icon to pause
             playOrPauseBtn.setGlyphName("PAUSE");
             mediaPlayer.setRate(1);
         }
         if (mediaPlayer.getStatus()==MediaPlayer.Status.STOPPED){
             mediaPlayer.play();
+            s += "Now Playing: ";
             playOrPauseBtn.setGlyphName("PAUSE");
             mediaPlayer.setRate(1);
         }
+        App.primaryStage.setTitle(s + status);
+
     }
     
     public void stop() {
         mediaPlayer.stop();
         playOrPauseBtn.setGlyphName("PLAY");
+        App.primaryStage.setTitle("Stopped");
     }
 
     public void slowRate() {
